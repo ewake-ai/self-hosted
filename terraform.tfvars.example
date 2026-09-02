@@ -1,0 +1,78 @@
+# Copy to terraform.tfvars and fill in your values.
+# See README.md for full guidance.
+
+aws_region  = "eu-west-3"
+tenant_name = "yourcompany"
+
+company = {
+  name      = "yourcompany"
+  public_id = "yourcompany"
+  domain    = "yourcompany.com"
+
+  # SSO providers for login. Register the redirect URI
+  # https://<name>.<root_domain>/sso/callback with each, then write the connector
+  # JSON to Secrets Manager — see README.
+  #
+  # Empty is valid and is the right choice before you have picked an IdP: the
+  # deployment then serves a username/password form instead, and terraform
+  # generates the admin password into ewake/<tenant>/<company>/app under
+  # ADMIN_PASSWORD for you to read out of Secrets Manager. Dex is not mounted at
+  # all in that case. Adding a connector later switches login over.
+  sso_connectors = ["google"]
+}
+
+# The build this deployment runs. Required, and a channel name ("stable",
+# "latest") is refused: nothing migrates this database except an apply from this
+# repo, and the image refuses to serve a schema behind it, so a tag that moves
+# under you turns the next task replacement into an outage. Bump this to upgrade.
+app_image_tag = "ewake-v0.164.0"
+
+root_domain    = "ewake.yourcompany.com"
+hosted_zone_id = "Z0123456789ABCDEFGHIJ"
+
+# Serve the dashboard at a name other than <company.name>.<root_domain> —
+# typically root_domain itself, when the delegated zone is already the name you
+# want. Optional; unset keeps the <company>.<root_domain> default.
+# company_host = "ewake.yourcompany.com"
+
+# If your hostname resolves from a private zone, or from a parent zone in an
+# account this deployment cannot write to, set hosted_zone_id = null and supply
+# your own certificate instead. You then own the A record and the certificate's
+# renewal. See README → "If you can't delegate a public zone".
+# hosted_zone_id      = null
+# acm_certificate_arn = "arn:aws:acm:eu-west-3:123456789012:certificate/..."
+
+# Only during a hostname cutover — serve the old and new names at once, then
+# empty both. See README → "Changing the hostname of a running deployment".
+# extra_certificate_arns = ["arn:aws:acm:eu-west-3:123456789012:certificate/..."]
+# alb_extra_host_headers = ["old.yourcompany.com"]
+
+# Two or more availability zones, all in aws_region.
+azs = ["eu-west-3a", "eu-west-3b"]
+
+# Reach the dashboard from your own network instead of the public internet.
+# Attaches this VPC to a transit gateway already shared with this account — an
+# org-level TGW shared via RAM, typically. Check `aws ec2 describe-transit-gateways`
+# can see it before setting this. transit_gateway_routes are the CIDRs reached
+# through it (a VPN range, say), added to every private route table; return
+# traffic needs the TGW's own route table to propagate this VPC's CIDR, which is
+# the TGW owner's side unless DefaultRouteTablePropagation is on.
+# transit_gateway_id     = "tgw-0123456789abcdef0"
+# transit_gateway_routes = ["10.38.0.0/23"]
+
+# Optional overrides (defaults shown):
+#
+# Private deployment: no public ingress, dashboard reached over VPN, a peered
+# network, or an SSM port-forward. Set both — `internal` removes the public IPs,
+# the CIDR list is what actually refuses a packet. See README → Private deployments.
+# alb_internal       = true
+#
+# With alb_internal, Slack and Datadog cannot reach the ALB. Point them at your own
+# public entry point in front of it; the dashboard stays private either way.
+# See README -> "Inbound webhooks on a private deployment".
+# public_inbound_base_url = "https://ewake-inbound.example.com"
+# alb_ingress_cidrs  = ["10.10.0.0/16", "10.38.0.0/23"]
+# vpc_cidr           = "10.10.0.0/16"
+# rds_instance_class = "db.t4g.small"
+# rds_storage_gb     = 50
+# rds_multi_az       = true
