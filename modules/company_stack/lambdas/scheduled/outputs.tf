@@ -33,3 +33,11 @@ output "custom_mcp_discovery_function_name" {
 output "kubernetes_discovery_function_name" {
   value = aws_lambda_function.kubernetes_discovery.function_name
 }
+
+output "clickhouse_discovery_function_name" {
+  value = aws_lambda_function.clickhouse_discovery.function_name
+}
+
+output "thanos_discovery_function_name" {
+  value = aws_lambda_function.thanos_discovery.function_name
+}
