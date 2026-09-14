@@ -286,13 +286,19 @@ aws ecs update-service \
 
 ### Connect integrations
 
-Slack, Datadog, GitLab, Grafana, Prometheus, Loki, Jira, Linear and PagerDuty
-are configured from the dashboard. See [docs.ewake.ai](https://docs.ewake.ai/).
+Slack, GitHub, Datadog, GitLab, Grafana, Prometheus, Loki, Jira, Linear and
+PagerDuty are configured from the dashboard. See
+[docs.ewake.ai](https://docs.ewake.ai/).
 
 Credentials are stored in Secrets Manager in your account.
 
-GitHub App, GitHub SSO, Microsoft SSO, Google SSO and Notion are not available
-in self-hosted deployments yet.
+Slack and GitHub are connected by creating an app in your own workspace or
+organisation, from a manifest the dashboard gives you. Nothing is registered with
+Ewake, and the credentials never leave your account. GitHub needs
+`app_image_tag` at `ewake-vX.Y.Z` or later.
+
+GitHub SSO, Microsoft SSO, Google SSO and Notion are not available in
+self-hosted deployments yet.
 
 ### Schedule the ambient agents
 

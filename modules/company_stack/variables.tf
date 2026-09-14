@@ -167,7 +167,7 @@ variable "datadog_api_key_secret_arn" {
 }
 
 variable "github_app_secret_arn" {
-  description = "Secrets Manager ARN of GitHub App credentials (JSON with CLIENT_ID, CLIENT_SECRET, APP_PRIVATE_KEY). Null for this deployment."
+  description = "Secrets Manager ARN of GitHub App credentials (JSON with CLIENT_ID, CLIENT_SECRET, APP_PRIVATE_KEY). Null for this deployment, which creates its own GitHub App from the dashboard and stores it alongside the other integration secrets."
   type        = string
   default     = null
   nullable    = true
